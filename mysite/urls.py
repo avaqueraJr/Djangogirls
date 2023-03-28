@@ -14,9 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, re_path
+from django.views.generic import TemplateView
+from blog import views
+from blog.views import HybridNewsFeedView
+from blog.views import FrontendAppView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('blog.urls')),
+    path('hybrid-news-feed/', HybridNewsFeedView.as_view(), name='hybrid_news_feed'),
+    re_path(r'^.*$', FrontendAppView.as_view()),
 ]

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Default Title{% endblock %}</title>
+    <!-- Include your CSS files here -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <!-- Add your site's header content here -->
+        <nav>
+            <!-- Add your site's navigation menu here -->
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Content from child templates will be inserted here -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <!-- Add your site's footer content here -->
+    </footer>
+
+    <!-- Include your JavaScript files here -->
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
