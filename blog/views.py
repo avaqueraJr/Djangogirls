@@ -8,21 +8,19 @@ from django.utils import timezone
 from .models import Post, StepCounter, CalorieIntake
 from .serializers import PostSerializer, StepCounterSerializer, CalorieIntakeSerializer
 from django.views.generic import TemplateView
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.conf import settings
+from django.template import loader
 import os
 
-class FrontendAppView(TemplateView):
-    def get_template_names(self):
-        template_name = "index.html"
-        return [template_name]
-    
+class ServeReactApp(TemplateView):
     def get(self, request, *args, **kwargs):
+        index_html_path = os.path.join(settings.FRONTEND_ASSETS_DIR,  'index.html')
         try:
-            with open(os.path.join(settings.BASE_DIR, 'frontend', 'build', 'index.html' )) as file:
-                return HttpResponse(file.read())
+             with open(os.path.join(settings.FRONTEND_BUILD_DIR, 'index.html'), 'rb') as f:
+                return HttpResponse(f.read(), content_type='text/html')
         except FileNotFoundError:
-            return HttpResponse("File not found", content_type='text/plain', status=500)
+            raise Http404('Page not found')
 
 class PostList(generics.ListAPIView):
     queryset = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
@@ -62,7 +60,7 @@ class HybridNewsFeedView(APIView):
         response_data = {
             'stepcounter': stepcounter_serializer.data,
             'calorieintake': calorieintake_serializer.data,
-            'posts': post_serializer.data,
+            'posts': post_serializer.data,  
         }
         return Response(response_data)
 

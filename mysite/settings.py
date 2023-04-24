@@ -10,11 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+from dotenv import load_dotenv
 from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_BUILD_DIR = os.path.join(BASE_DIR, 'new-frontend', 'dist')
 
 
 # Quick-start development settings - unsuitable for production
@@ -40,6 +42,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'blog',
     'rest_framework',
+    'chatgpt',
+    'frontend',
+    'rest_framework.authtoken',
+    'dj_rest_auth.registration',
+    'corsheaders',
+    'allauth',
+    'allauth.account',
+    'dj_rest_auth',
+    
 ]
 
 MIDDLEWARE = [
@@ -49,7 +60,9 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -57,7 +70,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'new-frontend', 'dist')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -122,17 +135,41 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Add the following lines to serve the React app
 STATICFILES_DIRS = [
-    BASE_DIR / "frontend/build/static",
+    os.path.join(BASE_DIR, 'static'),
+    
 ]
 
-TEMPLATES[0]['APP_DIRS'] = True
+FRONTEND_ASSETS_DIR = os.path.join(BASE_DIR, 'new-frontend', 'dist')
+
+
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+load_dotenv()
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+print("Index.html path:", os.path.join(BASE_DIR, 'new-frontend', 'dist', 'index.html'))
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Replace with the appropriate origin
+]

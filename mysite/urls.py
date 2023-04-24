@@ -14,14 +14,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path
-from django.views.generic import TemplateView
-from blog import views
-from blog.views import HybridNewsFeedView
-from blog.views import FrontendAppView
+from django.urls import path, include, re_path
+from blog.views import ServeReactApp, index
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('hybrid-news-feed/', HybridNewsFeedView.as_view(), name='hybrid_news_feed'),
-    re_path(r'^.*$', FrontendAppView.as_view()),
-]
+    path('api/blog/', include('blog.urls')),
+    re_path('.*', index, name='index'),
+    path('rest-auth/', include('rest_auth.urls')),
+    path('accounts/', include('allauth.urls')),
+] 
+urlpatterns += staticfiles_urlpatterns()

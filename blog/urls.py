@@ -1,9 +1,12 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
-from views import HybridNewsFeedView
+from blog.views import HybridNewsFeedView
 
 urlpatterns = [
-    path('posts/', views.PostList.as_view(), name='post_list'),  # Use PostList.as_view() instead of post_list
-    path('hybridnewsfeed/', HybridNewsFeedView.as_view(), name='hybridnewsfeed'),
-
+    path('posts/', views.PostListCreate.as_view(), name='post_list_create'),
+    path('stepcounter/', views.StepCounterListCreate.as_view(), name='stepcounter_list_create'),
+    path('calorieintake/', views.CalorieIntakeListCreate.as_view(), name='calorieintake_list_create'),
+    path('hybrid-news-feed/', views.HybridNewsFeedView.as_view(), name='hybrid_news_feed'),
+    path('dj-rest-auth/', include('dj_rest_auth.urls')),
+    path('dj-rest-auth/registration/', include('dj_rest_auth.registration.urls'))
 ]
